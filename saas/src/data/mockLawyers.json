@@ -1,0 +1,54 @@
+[
+  {
+    "id": "1",
+    "title": "Mr.",
+    "firstName": "أحمد",
+    "lastName": "محمد",
+    "fullName": "أحمد محمد علي",
+    "category": "محامي",
+    "subCategory": "محامي جنائي",
+    "jobTitle": "محامي أول",
+    "company": "مكتب المحاماة الدولي",
+    "email": "ahmed.mohamed@law.com",
+    "phone": "20212345678",
+    "mobile": "201234567890",
+    "city": "القاهرة",
+    "country": "مصر"
+  },
+  {
+    "id": "2",
+    "title": "Ms.",
+    "firstName": "سارة",
+    "lastName": "علي",
+    "fullName": "سارة علي حسن",
+    "category": "محامية",
+    "subCategory": "محامية تجارية",
+    "jobTitle": "مستشار قانوني",
+    "company": "شركة الاستشارات القانونية",
+    "email": "sara.ali@legal.com",
+    "phone": "966112345678",
+    "mobile": "966501234567",
+    "city": "الرياض",
+    "country": "السعودية"
+  },
+  {
+    "id": "3",
+    "title": "Mr.",
+    "firstName": "محمد",
+    "lastName": "خالد",
+    "fullName": "محمد خالد إبراهيم",
+    "category": "محامي",
+    "subCategory": "محامي مدني",
+    "jobTitle": "محامي أول",
+    "company": "مكتب المحاماة والاستشارات",
+    "email": "mohamed.khalid@law.ae",
+    "phone": "97141234567",
+    "mobile": "971501234567",
+    "city": "دبي",
+    "country": "الإمارات"
+  }
+]
+
+
+
+

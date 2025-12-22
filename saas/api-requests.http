@@ -1,0 +1,259 @@
+### REST Client for API Testing
+### يمكنك استخدام هذا الملف لاختبار API مباشرة في Cursor
+### تحتاج إلى تثبيت extension: REST Client (humao.rest-client)
+### اضغط على "Send Request" فوق كل طلب لتنفيذه
+
+@baseUrl = http://192.168.0.120:3001
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTM4MDcwNDg1Yzc5ZmEyNDVmODM0ZmIiLCJyb2xlIjoib3duZXIiLCJpYXQiOjE3NjUyNzk1MjN9.xNloZQIGrpHRglGCDFWa20FRPrq0g-l_y_7QU7tfsc0
+
+### Variables
+@clientApiUrl = {{baseUrl}}/api/client
+@lawyersApiUrl = {{baseUrl}}/api/lawyers
+@companyApiUrl = {{baseUrl}}/api/company
+@companyId = 69301fa532deeee78469507d
+@categoryApiUrl = {{baseUrl}}/api/category
+@categoryId = 693042680385568772a0c578
+@subcategoryApiUrl = {{baseUrl}}/api/subcategory
+@subcategoryId = 69317235344b98966b78658f
+
+###############################################
+### Client API Endpoints - العملاء
+###############################################
+
+### ============================================
+### POST addClient - إضافة عميل جديد
+### يستخدم في: http://localhost:3000/dashboard/people
+### ============================================
+POST {{clientApiUrl}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "userName": "roqia mohamed",
+  "phone": "+201226868255",
+  "email": "habibamsisi@gmail.com",
+  "password": "Aa!123456",
+  "company": "69285e3de6b4b0ca4d73040b",
+  "category": "69285e3de6b4b0ca4d73040b",
+  "subcategory": "69285e3de6b4b0ca4d73040b",
+  "emailURL": "https://www.w3schools.com/",
+  "city": "cairo",
+  "country": "Egypt"
+}
+
+### POST addClient - مثال آخر
+POST {{clientApiUrl}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "userName": "أحمد محمد",
+  "phone": "+201234567890",
+  "email": "ahmed@example.com",
+  "password": "SecurePass123!",
+  "company": "69285e3de6b4b0ca4d73040b",
+  "category": "69285e3de6b4b0ca4d73040b",
+  "subcategory": "69285e3de6b4b0ca4d73040b",
+  "emailURL": "https://example.com",
+  "city": "Cairo",
+  "country": "Egypt"
+}
+
+###############################################
+### Lawyers API Endpoints - المحامين
+###############################################
+
+### ============================================
+### POST addLawyer - إضافة محامي جديد
+### ============================================
+POST {{lawyersApiUrl}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "firstName": "أحمد",
+  "lastName": "محمد",
+  "title": "Mr",
+  "category": "Criminal Law",
+  "subCategory": "Defense",
+  "email": "ahmed.mohamed@example.com",
+  "phone": "+201234567890",
+  "mobile": "+201234567891",
+  "jobTitle": "Senior Lawyer",
+  "company": "Law Firm Name",
+  "address1": "123 Main Street",
+  "city": "Cairo",
+  "country": "Egypt",
+  "governorate": "Cairo",
+  "nationality": "Egyptian"
+}
+
+### ============================================
+### GET getAllLawyers - جلب جميع المحامين
+### ============================================
+GET {{lawyersApiUrl}}
+Authorization: Bearer {{authToken}}
+
+### ============================================
+### GET getSingleLawyer - جلب محامي واحد
+### ============================================
+@lawyerId = lawyer-id-here
+GET {{lawyersApiUrl}}/{{lawyerId}}
+Authorization: Bearer {{authToken}}
+
+### ============================================
+### PUT updateLawyer - تحديث محامي
+### ============================================
+PUT {{lawyersApiUrl}}/{{lawyerId}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "firstName": "أحمد",
+  "lastName": "علي",
+  "email": "ahmed.ali@example.com",
+  "phone": "+201234567892"
+}
+
+### ============================================
+### DELETE deleteLawyer - حذف محامي
+### ============================================
+DELETE {{lawyersApiUrl}}/{{lawyerId}}
+Authorization: Bearer {{authToken}}
+
+###############################################
+### Company API Endpoints - الشركات
+###############################################
+
+### ============================================
+### GET getAllCompanies - جلب جميع الشركات
+### ============================================
+GET {{companyApiUrl}}?page=1&limit=10
+Authorization: Bearer {{authToken}}
+
+### ============================================
+### GET getSingleCompany - جلب شركة واحدة
+### ============================================
+GET {{companyApiUrl}}/{{companyId}}
+Authorization: Bearer {{authToken}}
+
+### ============================================
+### POST createCompany - إضافة شركة جديدة
+### ============================================
+POST {{companyApiUrl}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "New Company",
+  "type": "company",
+  "country": "Egypt"
+}
+
+### ============================================
+### PUT updateCompany - تحديث شركة
+### ============================================
+PUT {{companyApiUrl}}/{{companyId}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "country": "Egypt"
+}
+
+### ============================================
+### DELETE deleteCompany - حذف شركة
+### ============================================
+DELETE {{companyApiUrl}}/{{companyId}}
+Authorization: Bearer {{authToken}}
+
+###############################################
+### Category API Endpoints - الفئات
+###############################################
+
+### ============================================
+### GET getAllCategories - جلب جميع الفئات
+### ============================================
+GET {{categoryApiUrl}}
+Authorization: Bearer {{authToken}}
+
+### ============================================
+### GET getSingleCategory - جلب فئة واحدة
+### ============================================
+GET {{categoryApiUrl}}/{{categoryId}}
+Authorization: Bearer {{authToken}}
+
+### ============================================
+### POST createCategory - إضافة فئة جديدة
+### ============================================
+POST {{categoryApiUrl}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "categoryName",
+  "description": "categoryDescription"
+}
+
+### ============================================
+### PUT updateCategory - تحديث فئة
+### ============================================
+PUT {{categoryApiUrl}}/{{categoryId}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "categoryNamee"
+}
+
+### ============================================
+### DELETE deleteCategory - حذف فئة
+### ============================================
+DELETE {{categoryApiUrl}}/{{categoryId}}
+Authorization: Bearer {{authToken}}
+
+###############################################
+### Subcategory API Endpoints - الفئات الفرعية
+###############################################
+
+### ============================================
+### GET getAllSubcategories - جلب جميع الفئات الفرعية
+### ============================================
+GET {{subcategoryApiUrl}}
+Authorization: Bearer {{authToken}}
+
+### ============================================
+### GET getSingleSubcategory - جلب فئة فرعية واحدة
+### ============================================
+GET {{subcategoryApiUrl}}/{{subcategoryId}}
+Authorization: Bearer {{authToken}}
+
+### ============================================
+### POST createSubcategory - إضافة فئة فرعية جديدة
+### ============================================
+POST {{subcategoryApiUrl}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "subcategoryName",
+  "description": "subcategoryDescription"
+}
+
+### ============================================
+### PUT updateSubcategory - تحديث فئة فرعية
+### ============================================
+PUT {{subcategoryApiUrl}}/{{subcategoryId}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "subcategoryNameeeeeee"
+}
+
+### ============================================
+### DELETE deleteSubcategory - حذف فئة فرعية
+### ============================================
+DELETE {{subcategoryApiUrl}}/{{subcategoryId}}
+Authorization: Bearer {{authToken}}
+
