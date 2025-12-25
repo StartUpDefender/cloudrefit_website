@@ -12,7 +12,8 @@ import Button from "@mui/material/Button";
 import { signIn } from "next-auth/react";
 import { Alert } from "@mui/material";
 import signinErrors from "./signinErrors";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuthStore } from "@/stores/auth.store";
 
 /**
  * Form Validation Schema
@@ -22,26 +23,18 @@ const schema = z.object({
     .string()
     .email("You must enter a valid email")
     .nonempty("You must enter an email"),
-  password: z
-    .string()
-    .min(8, "Password is too short - must be at least 8 chars.")
-    .nonempty("Please enter your password.")
-    .regex(/[a-z]/, "Password must contain at least one lowercase letter.")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
-    .regex(/[0-9]/, "Password must contain at least one number.")
-    .regex(/[^A-Za-z0-9]/, "Password must contain at least one symbol."),
-  remember: z.boolean().optional(),
 });
 
 type FormType = z.infer<typeof schema>;
 
 const defaultValues = {
   email: "",
-  password: "",
-  remember: true,
 };
 
-function AuthJsCredentialsSignInForm() {
+function ForgetPasswordForm() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { isLoading, forgetPassword } = useAuthStore();
   const { control, formState, handleSubmit, setValue, setError } =
     useForm<FormType>({
       mode: "onChange",
@@ -50,26 +43,18 @@ function AuthJsCredentialsSignInForm() {
     });
 
   const { isValid, dirtyFields, errors } = formState;
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
   async function onSubmit(formData: FormType) {
-    setIsLoading(true);
-    const { email } = formData;
-
-    const result = await signIn("credentials", {
-      email,
-      formType: "signin",
-      redirect: false,
-    });
-
-    if (result?.error) {
-      setError("root", { type: "manual", message: signinErrors[result.error] });
-    } else {
-      router.push(result?.url || "/");
+    try {
+      const { email } = formData;
+      await forgetPassword({ email });
+      router.push(`/verify-otp?email=${email}&prev=${pathname}`);
+    } catch (error) {
+      setError("root", {
+        type: "manual",
+        message: error?.response?.data?.message,
+      });
     }
-
-    setIsLoading(false);
   }
 
   return (
@@ -84,7 +69,7 @@ function AuthJsCredentialsSignInForm() {
           className="mb-8"
           severity="error"
           sx={(theme) => ({
-            backgroundColor: "bg-red",
+            backgroundColor: theme.palette.error.light,
             color: theme.palette.error.dark,
           })}
         >
@@ -109,41 +94,25 @@ function AuthJsCredentialsSignInForm() {
           />
         )}
       />
-      <Controller
-        name="password"
-        control={control}
-        render={({ field }) => (
-          <TextField
-            {...field}
-            className="mb-6"
-            label="Password"
-            type="password"
-            error={!!errors.password}
-            helperText={errors?.password?.message}
-            variant="outlined"
-            required
-            fullWidth
-          />
-        )}
-      />
-      <div className="flex items-end justify-end">
-        <Link className="text-md font-medium" to="/forget-password">
-          Forgot password?
+
+      <div className="flex flex-col items-end justify-center sm:flex-row sm:justify-between">
+        <Link className="text-md font-medium" to="/sign-in">
+          Back to Login
         </Link>
       </div>
       <Button
         variant="contained"
         color="secondary"
         className="mt-4 w-full"
-        aria-label="Sign in"
+        aria-label="Send"
         disabled={_.isEmpty(dirtyFields) || !isValid || isLoading}
         type="submit"
         size="large"
       >
-        {isLoading ? "Loading..." : "Sign in"}
+        {isLoading ? "Loading..." : "send"}
       </Button>
     </form>
   );
 }
 
-export default AuthJsCredentialsSignInForm;
+export default ForgetPasswordForm;

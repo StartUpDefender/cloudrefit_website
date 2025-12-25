@@ -13,35 +13,38 @@ import { signIn } from "next-auth/react";
 import { Alert } from "@mui/material";
 import signinErrors from "./signinErrors";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/stores/auth.store";
 
 /**
  * Form Validation Schema
  */
-const schema = z.object({
-  email: z
-    .string()
-    .email("You must enter a valid email")
-    .nonempty("You must enter an email"),
-  password: z
-    .string()
-    .min(8, "Password is too short - must be at least 8 chars.")
-    .nonempty("Please enter your password.")
-    .regex(/[a-z]/, "Password must contain at least one lowercase letter.")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
-    .regex(/[0-9]/, "Password must contain at least one number.")
-    .regex(/[^A-Za-z0-9]/, "Password must contain at least one symbol."),
-  remember: z.boolean().optional(),
-});
+const schema = z
+  .object({
+    password: z
+      .string()
+      .min(8, "Password is too short - must be at least 8 chars.")
+      .nonempty("Please enter your password.")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter.")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
+      .regex(/[0-9]/, "Password must contain at least one number.")
+      .regex(/[^A-Za-z0-9]/, "Password must contain at least one symbol."),
+    passwordConfirm: z.string().nonempty("Password confirmation is required"),
+  })
+  .refine((data) => data.password === data.passwordConfirm, {
+    message: "Passwords must match",
+    path: ["passwordConfirm"],
+  });
 
 type FormType = z.infer<typeof schema>;
 
 const defaultValues = {
-  email: "",
   password: "",
-  remember: true,
+  confirmPassword: "",
 };
 
-function AuthJsCredentialsSignInForm() {
+function ResetPasswordForm() {
+  const router = useRouter();
+  const { isLoading, resetPassword } = useAuthStore();
   const { control, formState, handleSubmit, setValue, setError } =
     useForm<FormType>({
       mode: "onChange",
@@ -50,26 +53,17 @@ function AuthJsCredentialsSignInForm() {
     });
 
   const { isValid, dirtyFields, errors } = formState;
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
   async function onSubmit(formData: FormType) {
-    setIsLoading(true);
-    const { email } = formData;
-
-    const result = await signIn("credentials", {
-      email,
-      formType: "signin",
-      redirect: false,
-    });
-
-    if (result?.error) {
-      setError("root", { type: "manual", message: signinErrors[result.error] });
-    } else {
-      router.push(result?.url || "/");
+    try {
+      await resetPassword({ password: formData.password });
+      router.push(`/sign-in`);
+    } catch (error: any) {
+      setError("root", {
+        type: "manual",
+        message: error?.response?.data?.message,
+      });
     }
-
-    setIsLoading(false);
   }
 
   return (
@@ -91,24 +85,7 @@ function AuthJsCredentialsSignInForm() {
           {errors?.root?.message}
         </Alert>
       )}
-      <Controller
-        name="email"
-        control={control}
-        render={({ field }) => (
-          <TextField
-            {...field}
-            className="mb-6"
-            label="Email"
-            autoFocus
-            type="email"
-            error={!!errors.email}
-            helperText={errors?.email?.message}
-            variant="outlined"
-            required
-            fullWidth
-          />
-        )}
-      />
+
       <Controller
         name="password"
         control={control}
@@ -126,24 +103,38 @@ function AuthJsCredentialsSignInForm() {
           />
         )}
       />
-      <div className="flex items-end justify-end">
-        <Link className="text-md font-medium" to="/forget-password">
-          Forgot password?
-        </Link>
-      </div>
+
+      <Controller
+        name="passwordConfirm"
+        control={control}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            className="mb-6"
+            label="Confirm Password"
+            type="password"
+            error={!!errors.passwordConfirm}
+            helperText={errors?.passwordConfirm?.message}
+            variant="outlined"
+            required
+            fullWidth
+          />
+        )}
+      />
+
       <Button
         variant="contained"
         color="secondary"
         className="mt-4 w-full"
-        aria-label="Sign in"
+        aria-label="Reset Password"
         disabled={_.isEmpty(dirtyFields) || !isValid || isLoading}
         type="submit"
         size="large"
       >
-        {isLoading ? "Loading..." : "Sign in"}
+        {isLoading ? "Loading..." : "Reset Password"}
       </Button>
     </form>
   );
 }
 
-export default AuthJsCredentialsSignInForm;
+export default ResetPasswordForm;
