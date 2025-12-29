@@ -12,7 +12,7 @@ import Button from "@mui/material/Button";
 import { signIn } from "next-auth/react";
 import { Alert } from "@mui/material";
 import signinErrors from "./signinErrors";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/stores/auth.store";
 
 /**
@@ -45,6 +45,8 @@ const defaultValues = {
 function ResetPasswordForm() {
   const router = useRouter();
   const { isLoading, resetPassword } = useAuthStore();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token") || "";
   const { control, formState, handleSubmit, setValue, setError } =
     useForm<FormType>({
       mode: "onChange",
@@ -56,7 +58,7 @@ function ResetPasswordForm() {
 
   async function onSubmit(formData: FormType) {
     try {
-      await resetPassword({ password: formData.password });
+      await resetPassword({ password: formData.password, token });
       router.push(`/sign-in`);
     } catch (error: any) {
       setError("root", {

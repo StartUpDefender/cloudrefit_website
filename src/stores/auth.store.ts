@@ -23,6 +23,7 @@ export interface VerifyOtp {
 }
 export interface ResetPassword {
   password: string;
+  token: string;
 }
 interface AuthState {
   user: User | null;
@@ -30,7 +31,7 @@ interface AuthState {
   isLoading: boolean;
 
   register: (data: RegisterPayload) => Promise<void>;
-  verifyOtp: (data: VerifyOtp) => Promise<void>;
+  verifyOtp: (data: VerifyOtp) => Promise<{ token: string }>;
   forgetPassword: (data: Partial<User>) => Promise<void>;
   resetPassword: (data: ResetPassword) => Promise<void>;
   changePassword: (data: ResetPassword) => Promise<void>;
@@ -58,15 +59,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   verifyOtp: async (data: VerifyOtp) => {
     set({ isLoading: true });
     try {
-      await api.post("auth/verify-otp", data);
+      const res = await api.post("auth/verify-otp", data);
+      return res.data.token;
     } catch (error) {
       set({ isLoading: false });
       throw error;
     }
   },
   forgetPassword: async (data: Partial<User>) => {
-    set({ isLoading: true });
     try {
+      set({ isLoading: true });
       await api.post("auth/forgetPassword", data);
     } catch (error) {
       set({ isLoading: false });
@@ -74,17 +76,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
   resetPassword: async (data: ResetPassword) => {
-    set({ isLoading: true });
     try {
-      await api.post("auth/resetPassword", data);
+      set({ isLoading: true });
+      await api.post(
+        "auth/resetPassword",
+        { password: data.password },
+        {
+          headers: {
+            Authorization: `Bearer ${data.token}`,
+          },
+        }
+      );
     } catch (error) {
       set({ isLoading: false });
       throw error;
     }
   },
   changePassword: async (data: ResetPassword) => {
-    set({ isLoading: true });
     try {
+      set({ isLoading: true });
       await api.post("auth/changePassword", data);
     } catch (error) {
       set({ isLoading: false });

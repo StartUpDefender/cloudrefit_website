@@ -4,7 +4,7 @@ import { createStorage } from "unstorage";
 import memoryDriver from "unstorage/drivers/memory";
 import vercelKVDriver from "unstorage/drivers/vercel-kv";
 import { UnstorageAdapter } from "@auth/unstorage-adapter";
-import type { NextAuthConfig } from "next-auth";
+import type { JWT, NextAuthConfig } from "next-auth";
 import type { Provider } from "next-auth/providers";
 import Credentials from "next-auth/providers/credentials";
 import Facebook from "next-auth/providers/facebook";
@@ -29,16 +29,19 @@ export const providers: Provider[] = [
       /** SIGN IN */
       if (formInput.formType === "signin") {
         try {
-          const res = await fetch(`${process.env.API_URL}/api/auth/login`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: formInput.email,
-              password: formInput.password,
-            }),
-          });
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email: formInput.email,
+                password: formInput.password,
+              }),
+            }
+          );
 
           if (!res.ok) {
             const message = await res.text();
@@ -53,22 +56,19 @@ export const providers: Provider[] = [
 
           const user = await res.json();
 
-          if (!user?.id) return null;
+          if (!user?.user._id) return null;
 
           return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            accessToken: user.accessToken,
+            id: user.user._id,
+            email: user.user.email,
+            name: user.user.fullName,
+            accessToken: user.token,
+            role: user.user.role,
           };
         } catch (error) {
           console.error("LOGIN ERROR", error);
           return null;
         }
-      }
-
-      if (formInput.formType === "signup") {
-        return null;
       }
 
       return null;
@@ -81,7 +81,6 @@ export const providers: Provider[] = [
 
 const config = {
   theme: { logo: "/assets/images/logo/logo.svg" },
-  adapter: UnstorageAdapter(storage),
   pages: {
     signIn: "/sign-in",
   },
@@ -99,6 +98,7 @@ const config = {
       if (user) {
         token.accessToken = (user as any).accessToken;
         token.id = user.id;
+        token.role = (user as any).role;
       }
 
       if (trigger === "update") {
@@ -115,46 +115,11 @@ const config = {
       if (token.accessToken && typeof token.accessToken === "string") {
         session.accessToken = token.accessToken;
         session.user.id = token.id as string;
+        session.user.name = token.name as string;
+        session.user.role = token.role as string;
       }
 
-      if (session) {
-        try {
-          /**
-           * Get the session user from database
-           */
-          const response = await authGetDbUserByEmail(session.user.email);
-
-          const userDbData = (await response.json()) as User;
-
-          session.db = userDbData;
-
-          return session;
-        } catch (error) {
-          const errorStatus = error?.status;
-
-          /** If user not found, create a new user */
-          if (errorStatus === 404) {
-            const newUserResponse = await authCreateDbUser({
-              email: session.user.email,
-              role: ["admin"],
-              fullName: session.user.name,
-              photoURL: session.user.image,
-            });
-
-            const newUser = newUserResponse.data as User;
-
-            console.error("Error fetching user data:", error);
-
-            session.db = newUser;
-
-            return session;
-          }
-
-          throw error;
-        }
-      }
-
-      return null;
+      return session;
     },
   },
   experimental: {

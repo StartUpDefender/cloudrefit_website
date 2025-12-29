@@ -55,10 +55,11 @@ function AuthJsCredentialsSignInForm() {
 
   async function onSubmit(formData: FormType) {
     setIsLoading(true);
-    const { email } = formData;
+    const { email, password } = formData;
 
     const result = await signIn("credentials", {
       email,
+      password,
       formType: "signin",
       redirect: false,
     });
@@ -66,7 +67,7 @@ function AuthJsCredentialsSignInForm() {
     if (result?.error) {
       setError("root", { type: "manual", message: signinErrors[result.error] });
     } else {
-      router.push(result?.url || "/");
+      router.push("/example");
     }
 
     setIsLoading(false);

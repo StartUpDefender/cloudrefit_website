@@ -23,9 +23,9 @@ const VerifyOTPForm = () => {
   const { isValid, dirtyFields, errors } = formState;
   const onSubmit = async (data) => {
     try {
-      await verifyOtp({ email, otp: data.otp });
+      const token = await verifyOtp({ email, otp: data.otp });
       if (prev.split("/").pop() == "sign-up") router.push(`/sign-in`);
-      else router.push(`/reset-password`);
+      else router.push(`/reset-password?token=${token}`);
     } catch (error) {
       setError("root", {
         type: "manual",

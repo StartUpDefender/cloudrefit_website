@@ -7,15 +7,11 @@ import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
-import { signIn } from "next-auth/react";
 import FormHelperText from "@mui/material/FormHelperText";
 import { Alert } from "@mui/material";
-import signinErrors from "./signinErrors";
-import { authCreateDbUser } from "@auth/authApi";
-import { User } from "@auth/user";
-import { use, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/auth.store";
+import { MuiTelInput } from "mui-tel-input";
 
 /**
  * Form Validation Schema
@@ -87,11 +83,13 @@ function AuthJsCredentialsSignUpForm() {
   async function onSubmit(formData: FormType) {
     try {
       const { fullName, email, password, phone, companyName } = formData;
+      const normalizedPhone = phone.replace(/\D/g, "");
+      const phoneE164 = `+${normalizedPhone}`;
       await register({
         fullName,
         email,
         password,
-        phone,
+        phone: phoneE164,
         companyName,
         role: "accountOwner",
       });
@@ -174,24 +172,6 @@ function AuthJsCredentialsSignUpForm() {
         )}
       />
       <Controller
-        name="phone"
-        control={control}
-        render={({ field }) => (
-          <TextField
-            {...field}
-            className="mb-6"
-            label="Phone"
-            autoFocus
-            type="name"
-            error={!!errors.phone}
-            helperText={errors?.phone?.message}
-            variant="outlined"
-            required
-            fullWidth
-          />
-        )}
-      />
-      <Controller
         name="email"
         control={control}
         render={({ field }) => (
@@ -205,6 +185,21 @@ function AuthJsCredentialsSignUpForm() {
             variant="outlined"
             required
             fullWidth
+          />
+        )}
+      />
+      <Controller
+        name="phone"
+        control={control}
+        render={({ field }) => (
+          <MuiTelInput
+            {...field}
+            defaultCountry="EG"
+            label="Phone"
+            fullWidth
+            error={!!errors.phone}
+            helperText={errors?.phone?.message}
+            className="mb-6"
           />
         )}
       />
