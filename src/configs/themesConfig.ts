@@ -129,8 +129,8 @@ export const themesConfig: FuseThemesType = {
       },
       secondary: {
         main: "#1A1A3F",
-        light: "#8FA3FF", // Light indigo
-        dark: "#2F3FB8", // Deep indigo
+        light: "#8FA3FF",
+        dark: "#2A2A6A",
         contrastText: "#FFFFFF",
       },
       ...neutralsLightTheme,
@@ -157,11 +157,12 @@ export const themesConfig: FuseThemesType = {
         contrastText: "#FFFFFF",
       },
       secondary: {
-        main: "#3C83D6",
-        light: "#5A9AF0",
-        dark: "#1D5EB0",
-        contrastText: "#FFFFFF",
+        main: "#8FA3FF",
+        light: "#C5D0FF",
+        dark: "#5A6BBB",
+        contrastText: "#000000",
       },
+
       ...neutralsDarkTheme,
       text: {
         primary: "#E5E7EB",

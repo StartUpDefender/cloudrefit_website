@@ -4,7 +4,7 @@ import AuthGuardRedirect from "@auth/AuthGuardRedirect";
 function Layout({ children }) {
   return (
     <AuthGuardRedirect auth={["superAdmin", "accountOwner"]}>
-      <MainLayout>{children}</MainLayout>
+      <MainLayout footer={false}>{children}</MainLayout>
     </AuthGuardRedirect>
   );
 }
