@@ -1,6 +1,6 @@
 const locale = {
-	APPLICATIONS: 'تطبيقات',
-	EXAMPLE: 'مثال'
+  Dashboard: "لوحة التحكم",
+  MYCLOUDS: "السحابات الخاصة بي",
 };
 
 export default locale;

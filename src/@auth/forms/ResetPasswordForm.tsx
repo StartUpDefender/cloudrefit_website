@@ -44,7 +44,8 @@ const defaultValues = {
 
 function ResetPasswordForm() {
   const router = useRouter();
-  const { isLoading, resetPassword } = useAuthStore();
+  const { resetPassword } = useAuthStore();
+  const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
   const { control, formState, handleSubmit, setValue, setError } =
@@ -58,6 +59,7 @@ function ResetPasswordForm() {
 
   async function onSubmit(formData: FormType) {
     try {
+      setIsLoading(true);
       await resetPassword({ password: formData.password, token });
       router.push(`/sign-in`);
     } catch (error: any) {
@@ -65,6 +67,8 @@ function ResetPasswordForm() {
         type: "manual",
         message: error?.response?.data?.message,
       });
+    } finally {
+      setIsLoading(false);
     }
   }
 
