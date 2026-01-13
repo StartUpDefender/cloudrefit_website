@@ -4,24 +4,23 @@ import FusePageSimple from "@fuse/core/FusePageSimple";
 import { useTranslation } from "react-i18next";
 import { styled } from "@mui/material/styles";
 import "../i18n";
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { CustomStepper } from "@/components/Stepper";
-import AccountDetailsForm from "./AccountDetails";
-import ScheduleOnboarding from "./ScheduleOnboarding";
-import InviteMember from "./InviteMember";
-import ConnectCloud from "./ConnectCloud";
+import AccountDetailsForm from "../components/AccountDetails";
+import ScheduleOnboarding from "../components/ScheduleOnboarding";
+import InviteMember from "../components/InviteMember";
+import ConnectCloud from "../components/ConnectCloud";
 
 const Root = styled(FusePageSimple)(({ theme }) => ({
   "& .FusePageSimple-header": {
-    backgroundColor: theme.vars.palette.background.paper,
     borderBottomWidth: 1,
     borderStyle: "solid",
     borderColor: theme.vars.palette.divider,
   },
 }));
 
-function CloudsView() {
+function NoCloudsView() {
   const { t } = useTranslation("cloudPage");
   const [activeStep, setActiveStep] = useState(0);
 
@@ -32,9 +31,9 @@ function CloudsView() {
     <Root
       header={
         <div className="p-6">
-          <h3 className="font-bold">{t("TITLE")}</h3>
+          <Typography className="font-bold">{t("TITLE")}</Typography>
           <br />
-          <h5>{t("SUB")}</h5>
+          <Typography>{t("SUB")}</Typography>
         </div>
       }
       content={
@@ -62,4 +61,4 @@ function CloudsView() {
   );
 }
 
-export default CloudsView;
+export default NoCloudsView;
