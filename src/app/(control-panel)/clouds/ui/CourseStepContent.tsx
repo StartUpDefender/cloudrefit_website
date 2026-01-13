@@ -1,8 +1,8 @@
 import { useTheme } from '@mui/material/styles';
 import { Typography } from '@mui/material';
 import FuseLoading from '@fuse/core/FuseLoading';
-import { useCourseStepContent } from '../../api/hooks/steps/useCourseStepContent';
-import { CourseStep } from '../../api/types';
+import { useCourseStepContent } from '@/app/(control-panel)/clouds/api/hooks/steps/useCourseStepContent';
+import { CourseStep } from '@/app/(control-panel)/clouds/api/types';
 
 type CourseStepContentProps = {
 	step: CourseStep;

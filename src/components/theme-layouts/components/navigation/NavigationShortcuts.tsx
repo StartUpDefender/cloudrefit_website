@@ -16,8 +16,8 @@ type NavigationShortcutsProps = {
 function NavigationShortcuts(props: NavigationShortcutsProps) {
 	const { variant, className } = props;
 	const { flattenData: navigation } = useNavigationItems();
-	const { data: user, updateUser, isGuest } = useUser();
-	const [userShortcuts, setUserShortcuts] = useState<string[]>(user?.shortcuts || []);
+	const { data: user, isGuest } = useUser();
+	const [userShortcuts, setUserShortcuts] = useState<string[]>((user as any)?.shortcuts || []);
 	const prevUserShortcuts = usePrevious(userShortcuts);
 
 	useEffect(() => {
@@ -29,7 +29,7 @@ function NavigationShortcuts(props: NavigationShortcutsProps) {
 		/* if (!isGuest && prevUserShortcuts && !_.isEqual(userShortcuts, prevUserShortcuts)) {
 			updateUser(setIn(user, 'shortcuts', userShortcuts) as User);
 		}*/
-	}, [isGuest, prevUserShortcuts, updateUser, user, userShortcuts]);
+	}, [isGuest, prevUserShortcuts, user, userShortcuts]);
 
 	function handleShortcutsChange(newShortcuts: string[]) {
 		setUserShortcuts(newShortcuts);

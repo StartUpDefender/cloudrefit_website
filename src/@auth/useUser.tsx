@@ -17,6 +17,7 @@ export default function useUser() {
       role: session.user.role,
       name: session.user.name,
       photoURL: "",
+      settings: undefined,
     };
   }, [session]);
 
