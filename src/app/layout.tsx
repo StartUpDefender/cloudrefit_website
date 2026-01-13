@@ -1,15 +1,24 @@
 import clsx from "clsx";
 import "src/styles/splash-screen.css";
 import "src/styles/index.css";
-import "../../public/assets/fonts/material-design-icons/MaterialIconsOutlined.css";
-import "../../public/assets/fonts/Geist/geist.css";
-import "../../public/assets/fonts/meteocons/style.css";
+import { Cairo, Roboto_Serif } from "next/font/google";
 import "../../public/assets/styles/prism.css";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@auth/authJs";
 import generateMetadata from "../utils/generateMetadata";
 import App from "./App";
 
+const cairo = Cairo({
+  subsets: ["arabic"],
+  weight: ["400", "700"],
+  variable: "--font-cairo",
+});
+
+const robotoSerif = Roboto_Serif({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-roboto-serif",
+});
 // eslint-disable-next-line react-refresh/only-export-components
 export const metadata = await generateMetadata({
   title: "ClooudRefit",
@@ -28,7 +37,7 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-    <html lang="en">
+    <html lang="en" className={`${robotoSerif.variable} ${cairo.variable}`}>
       <head>
         <meta charSet="utf-8" />
         <meta
