@@ -17,6 +17,13 @@ const nextConfig: NextConfig = {
   },
   turbopack: {
     rules: {},
+    resolveAlias: {
+      'dayjs/plugin/localizedFormat.js': 'dayjs/plugin/localizedFormat',
+      'dayjs/plugin/weekOfYear.js': 'dayjs/plugin/weekOfYear',
+      'dayjs/plugin/customParseFormat.js': 'dayjs/plugin/customParseFormat',
+      'dayjs/plugin/isBetween.js': 'dayjs/plugin/isBetween',
+      'dayjs/plugin/advancedFormat.js': 'dayjs/plugin/advancedFormat',
+    },
   },
   ...(!isTurbopack && {
     webpack: (config) => {
@@ -26,6 +33,18 @@ const nextConfig: NextConfig = {
           resourceQuery: /raw/,
           use: "raw-loader",
         });
+      }
+
+      // Fix for dayjs plugin resolution in webpack builds
+      if (config.resolve) {
+        config.resolve.alias = {
+          ...config.resolve.alias,
+          'dayjs/plugin/localizedFormat.js': 'dayjs/plugin/localizedFormat',
+          'dayjs/plugin/weekOfYear.js': 'dayjs/plugin/weekOfYear',
+          'dayjs/plugin/customParseFormat.js': 'dayjs/plugin/customParseFormat',
+          'dayjs/plugin/isBetween.js': 'dayjs/plugin/isBetween',
+          'dayjs/plugin/advancedFormat.js': 'dayjs/plugin/advancedFormat',
+        };
       }
 
       return config;
