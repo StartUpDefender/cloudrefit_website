@@ -33,6 +33,7 @@ interface AuthState {
   register: (data: RegisterPayload) => Promise<void>;
   verifyOtp: (data: VerifyOtp) => Promise<{ token: string }>;
   forgetPassword: (data: Partial<User>) => Promise<void>;
+  resendOtp: (data: Partial<User>) => Promise<void>;
   resetPassword: (data: ResetPassword) => Promise<void>;
   changePassword: (data: ResetPassword) => Promise<void>;
   updateUser: (user: Partial<User>) => void;
@@ -70,6 +71,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ isLoading: true });
       await api.post("auth/forgetPassword", data);
+    } catch (error) {
+      set({ isLoading: false });
+      throw error;
+    }
+  },
+  resendOtp: async (data: Partial<User>) => {
+    try {
+      set({ isLoading: true });
+      await api.post("auth/resendOTP", data);
     } catch (error) {
       set({ isLoading: false });
       throw error;
